@@ -95,6 +95,7 @@ Addition of TX141W and TX145wsdth:
 #define LACROSSE_TX141 37
 #define LACROSSE_TX141TH 40
 #define LACROSSE_TX141BV3 33
+#define LACROSSE_TX141THBV3 41
 #define LACROSSE_TX141W 65
 
 static int lacrosse_tx141x_decode(r_device *decoder, bitbuffer_t *bitbuffer)
@@ -269,9 +270,15 @@ static int lacrosse_tx141x_decode(r_device *decoder, bitbuffer_t *bitbuffer)
             decoder_logf(decoder, 1, __func__, "Checksum digest TX141TH failed");
             return DECODE_FAIL_MIC;
         }
+        const char bv2model[] = "LaCrosse-TX141THBv2";
+        const char bv3model[] = "LaCrosse-TX141THBv3";
+        const char *model = bv2model;
+        if (bitbuffer->bits_per_row[r] == LACROSSE_TX141THBV3) {
+          model = bv3model;
+        }
         /* clang-format off */
         data = data_make(
-                "model",         "",              DATA_STRING, "LaCrosse-TX141THBv2",
+                "model",         "",              DATA_STRING, model,
                 "id",            "Sensor ID",     DATA_FORMAT, "%02x", DATA_INT, id,
                 "channel",       "Channel",       DATA_INT, channel,
                 "battery_ok",    "Battery",       DATA_INT,    !battery_low,
